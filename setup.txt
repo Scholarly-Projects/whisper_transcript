@@ -1,0 +1,72 @@
+# Whisper Transcription Tool Setup Guide
+
+This guide will walk you through the process of setting up and using the transcription tool to convert audio/video files into transcriptions.
+
+---
+
+## Requirements
+
+1. **Install Python 3.8+**  
+   Download from [python.org](https://python.org).  
+   Verify installation with:
+
+   ```bash
+   python --version
+    ```
+
+2. Download git
+
+    ```
+    brew install git
+    ```
+
+Verify installation with:
+
+    ```
+    git --version
+```
+
+4. Step 1: Clone the Repository
+    1. Open your terminal/command prompt.
+
+    2. Clone the repository and navigate into it:
+
+    ```
+    git clone https://github.com/your-username/whisper_transcription_tool.git
+    cd whisper_transcription_tool
+    ```
+
+    3. Clone the Whisper.cpp submodule:
+
+    ```
+    git clone https://github.com/ggerganov/whisper.cpp.git
+    cd whisper.cpp
+    make
+    cd ..
+    ```
+
+Step 2: Set Up Input and Output Folders
+Create folders for input (A/) and output (B/) files:
+
+    ```
+    mkdir A B
+    ```
+
+Step 3: Add Your Audio/Video Files
+Place your audio/video files in the A/ folder.
+Supported formats: .mp3, .mp4, .wav, .m4a
+
+    Step 4: Run the Transcription Tool
+    1. Open a terminal and navigate to the project folder:
+
+    ```
+    cd whisper_transcription_tool
+    ```
+
+    2. Run the transcription tool:
+
+    ```
+    python transcription_tool.py
+    ```
+
+3. The tool will process all files in the A/ folder and generate .csv transcription files in the B/ folder.
