@@ -43,6 +43,8 @@ git clone https://github.com/ggerganov/whisper.cpp.git
 cd whisper.cpp
 ```
 
+windows: same but run in powershell
+
 5. 
 
 ```
@@ -51,12 +53,18 @@ cmake ..
 make
 ```
 
+windows: absolutely lost on how to implement this on windows
+
+```
+mkdir -p build && cd build
+```
+in powershell
+
+Both mac and windows in bash:
+
 ```
 pip install pyannote.audio torch torchaudio
 ```
-
-```
-
 
 6. 
 
@@ -76,9 +84,21 @@ cd /Users/andrewweymouth/Documents/GitHub/whisper_transcript/whisper.cpp/models
 curl -O https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
 ```
 
-9. 
+9.
+
+```
+mkdir A B
+```
+
+10. Drop audio files in A
+
+11. 
 
 ```
 python script.py
 ```
+
+12. 
+
+CSV files should generate in B
 
