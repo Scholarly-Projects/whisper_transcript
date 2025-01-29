@@ -16,7 +16,7 @@ source .venv/bin/activate
 2. 
 
 ```
-pip install pydub
+pip install ffmpeg-python pandas numpy
 ```
 
 3. 
@@ -26,7 +26,6 @@ mac:
 brew install ffmpeg
 ```
 
-windows:
 
 4. 
 
@@ -42,6 +41,13 @@ mkdir -p build && cd build
 cmake ..
 make
 ```
+
+```
+pip install pyannote.audio torch torchaudio
+```
+
+```
+
 
 6. 
 
