@@ -1,44 +1,6 @@
-# Ignore Python bytecode and logs
-__pycache__/
-*.py[cod]
-*.log
-
 # Ignore virtual environments
-.env/
 .venv/
-venv/
-env/
-ENV/
-
-# Ignore temporary files and backup files
-*.tmp
-*.swp
-*.bak
-*.sav
-*.orig
 
 # Ignore input/output folders and their contents
 A/
 B/
-
-# Ignore Whisper.cpp build files
-whisper.cpp/build/
-whisper.cpp/main
-whisper.cpp/whisper.o
-
-# Ignore any JSON transcription outputs (if kept temporarily)
-*.json
-
-# Ignore OS-specific files
-.DS_Store
-Thumbs.db
-
-# Ignore IDE/editor-specific files
-.vscode/
-.idea/
-*.iml
-*.code-workspace
-
-# Ignore dependency files if using a package manager
-pip-wheel-metadata/
-*.egg-info/

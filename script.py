@@ -2,7 +2,7 @@ import os
 import subprocess
 import csv
 import json
-from pydub import AudioSegment
+import ffmpeg  # Replacing pydub with ffmpeg-python
 
 # Paths for folders
 INPUT_FOLDER = "A"
@@ -12,21 +12,19 @@ WHISPER_EXECUTABLE = "./whisper.cpp/build/bin/whisper-cli"  # Corrected path
 # Ensure output folder exists
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-def convert_mp3_to_wav(mp3_path, wav_path):
+def convert_mp3_to_wav(mp3_path, wav_path, sample_rate=16000):
     """
-    Converts an MP3 file to WAV format using pydub and resamples to 16 kHz.
+    Converts an MP3 file to WAV format using ffmpeg-python with a specific sample rate.
     """
     try:
-        audio = AudioSegment.from_mp3(mp3_path)
-        # Resample to 16 kHz (required by Whisper)
-        audio = audio.set_frame_rate(16000)
-        audio.export(wav_path, format="wav")
-        print(f"Converted {mp3_path} to {wav_path} and resampled to 16 kHz")
-    except Exception as e:
+        # Use ffmpeg to convert MP3 to WAV with sample rate, and overwrite if exists
+        ffmpeg.input(mp3_path).output(wav_path, ar=sample_rate).overwrite_output().run()
+        print(f"Converted {mp3_path} to {wav_path} with sample rate {sample_rate} Hz")
+    except ffmpeg.Error as e:
         print(f"Error converting {mp3_path} to WAV: {e}")
         raise
 
-def transcribe_file(file_path, output_csv_path):
+def transcribe_file(file_path, output_csv_path, sample_rate=16000):
     """
     Transcribes an audio or video file using Whisper.cpp and writes the transcription to a CSV.
     """
@@ -34,10 +32,10 @@ def transcribe_file(file_path, output_csv_path):
         # If the file is an MP3, convert it to WAV first
         if file_path.lower().endswith(".mp3"):
             wav_file_path = file_path.replace(".mp3", ".wav")
-            convert_mp3_to_wav(file_path, wav_file_path)
+            convert_mp3_to_wav(file_path, wav_file_path, sample_rate)
             file_path = wav_file_path  # Use the WAV file for transcription
 
-        # Output JSON path (update to match whisper-cli options)
+        # Output JSON path (ensure no double .json extensions)
         json_output_path = output_csv_path.replace(".csv", ".json")
         
         # Command to run whisper-cli with correct arguments
@@ -52,7 +50,10 @@ def transcribe_file(file_path, output_csv_path):
         
         subprocess.run(command, check=True)
 
-        # Ensure the JSON file is created
+        # Ensure the JSON file is created and handle potential extra .json extension
+        if os.path.exists(json_output_path + ".json"):
+            os.rename(json_output_path + ".json", json_output_path)
+        
         if not os.path.exists(json_output_path):
             raise FileNotFoundError(f"Expected JSON output file not found: {json_output_path}")
         
@@ -60,17 +61,26 @@ def transcribe_file(file_path, output_csv_path):
         with open(json_output_path, "r", encoding="utf-8") as json_file:
             transcription_data = json.load(json_file)
 
-        # Write transcription to CSV
+        # Open the CSV file for writing
         with open(output_csv_path, "w", encoding="utf-8", newline="") as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(["speaker", "timestamp", "end time", "Words"])  # Header row
-            
-            for segment in transcription_data["segments"]:
-                speaker = segment.get("speaker", "Speaker 1")  # Assign "Speaker 1" by default
-                timestamp = segment["start"]
-                end_time = segment["end"]
-                words = segment["text"]
-                writer.writerow([speaker, timestamp, end_time, words])
+
+            # Process transcription data
+            if 'transcription' in transcription_data:
+                transcription_segments = transcription_data['transcription']
+                
+                for segment in transcription_segments:
+                    # Extract relevant details
+                    from_timestamp = segment['timestamps']['from']
+                    to_timestamp = segment['timestamps']['to']
+                    text = segment['text']
+
+                    # Use a placeholder for speaker if not provided
+                    speaker = 'Speaker'  # Placeholder
+                    
+                    # Write the data to the CSV
+                    writer.writerow([speaker, from_timestamp, to_timestamp, text])
 
         # Clean up temporary JSON file
         os.remove(json_output_path)
@@ -79,7 +89,7 @@ def transcribe_file(file_path, output_csv_path):
     except Exception as e:
         print(f"Error processing file {file_path}: {e}")
 
-def process_folder(input_folder, output_folder):
+def process_folder(input_folder, output_folder, sample_rate=16000):
     """
     Processes all audio/video files in the input folder and generates transcriptions in the output folder.
     """
@@ -88,7 +98,7 @@ def process_folder(input_folder, output_folder):
         if os.path.isfile(input_file_path) and file_name.lower().endswith((".mp3", ".mp4", ".wav", ".m4a")):
             output_file_name = os.path.splitext(file_name)[0] + ".csv"
             output_file_path = os.path.join(output_folder, output_file_name)
-            transcribe_file(input_file_path, output_file_path)
+            transcribe_file(input_file_path, output_file_path, sample_rate)
 
 if __name__ == "__main__":
     print("Starting transcription tool...")

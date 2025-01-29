@@ -6,67 +6,64 @@ This guide will walk you through the process of setting up and using the transcr
 
 ## Requirements
 
-1. **Install Python 3.8+**  
-   Download from [python.org](https://python.org).  
-   Verify installation with:
+1. # Create and activate a virtual environment
 
-   ```bash
-   python --version
-    ```
-
-2. Download git
-
-    ```
-    brew install git
-    ```
-
-Verify installation with:
-
-    ```
-    git --version
+```
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-4. Step 1: Clone the Repository
-    1. Open your terminal/command prompt.
+2. 
 
-    2. Clone the repository and navigate into it:
+```
+pip install pydub
+```
 
-    ```
-    git clone https://github.com/your-username/whisper_transcription_tool.git
-    cd whisper_transcription_tool
-    ```
+3. 
 
-    3. Clone the Whisper.cpp submodule:
+mac:
+```
+brew install ffmpeg
+```
 
-    ```
-    git clone https://github.com/ggerganov/whisper.cpp.git
-    cd whisper.cpp
-    make
-    cd ..
-    ```
+windows:
 
-Step 2: Set Up Input and Output Folders
-Create folders for input (A/) and output (B/) files:
+4. 
 
-    ```
-    mkdir A B
-    ```
+```
+git clone https://github.com/ggerganov/whisper.cpp.git
+cd whisper.cpp
+```
 
-Step 3: Add Your Audio/Video Files
-Place your audio/video files in the A/ folder.
-Supported formats: .mp3, .mp4, .wav, .m4a
+5. 
 
-    Step 4: Run the Transcription Tool
-    1. Open a terminal and navigate to the project folder:
+```
+mkdir -p build && cd build
+cmake ..
+make
+```
 
-    ```
-    cd whisper_transcription_tool
-    ```
+6. 
 
-    2. Run the transcription tool:
+```
+./whisper.cpp/build/bin/whisper-cli
+```
 
-    ```
-    python transcription_tool.py
-    ```
+7. 
 
-3. The tool will process all files in the A/ folder and generate .csv transcription files in the B/ folder.
+```
+cd /Users/andrewweymouth/Documents/GitHub/whisper_transcript/whisper.cpp/models
+```
+
+8. 
+
+```
+curl -O https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+```
+
+9. 
+
+```
+python script.py
+```
+
