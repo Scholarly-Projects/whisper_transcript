@@ -8,9 +8,18 @@ This guide will walk you through the process of setting up and using the transcr
 
 1. # Create and activate a virtual environment
 
+mac
+
 ```
 python3 -m venv .venv
 source .venv/bin/activate
+```
+
+windows
+
+```
+python -m venv .venv
+source .venv/Scripts/activate
 ```
 
 2. 
