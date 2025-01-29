@@ -70,17 +70,25 @@ def transcribe_file(file_path, output_csv_path, sample_rate=16000):
             if 'transcription' in transcription_data:
                 transcription_segments = transcription_data['transcription']
                 
+                speaker_counter = 1  # Counter for speaker IDs
+                current_speaker = None  # Keeps track of the current speaker
+                
                 for segment in transcription_segments:
                     # Extract relevant details
                     from_timestamp = segment['timestamps']['from']
                     to_timestamp = segment['timestamps']['to']
                     text = segment['text']
 
-                    # Use a placeholder for speaker if not provided
-                    speaker = 'Speaker'  # Placeholder
-                    
+                    # Determine the speaker (if speaker change detected)
+                    # This is a placeholder logic and will need improvement with speaker diarization
+                    if 'Speaker' in text:
+                        current_speaker = f"Speaker {speaker_counter}"
+                        speaker_counter += 1
+                    elif current_speaker is None:
+                        current_speaker = 'Speaker 1'  # Default speaker if no speaker change detected
+
                     # Write the data to the CSV
-                    writer.writerow([speaker, from_timestamp, to_timestamp, text])
+                    writer.writerow([current_speaker, from_timestamp, to_timestamp, text])
 
         # Clean up temporary JSON file
         os.remove(json_output_path)
